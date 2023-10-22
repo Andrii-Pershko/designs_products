@@ -1,5 +1,5 @@
 const express = require("express");
-const adminCheck = require("./admin_check");
+const adminCheck = require("./middlewares/admin_check");
 const logger = require("morgan");
 const productsRouter = require("./routes/products");
 const app = express();
