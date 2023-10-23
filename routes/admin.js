@@ -1,5 +1,5 @@
 const express = require("express");
-const { isAdmin } = require("../API/admin");
+const isAdmin = require("../API/admin");
 
 // const isValidId = require("../middlewares/isValidId");
 
