@@ -2,6 +2,7 @@ const express = require("express");
 const adminCheck = require("./middlewares/admin_check");
 const logger = require("morgan");
 const productsRouter = require("./routes/products");
+const adminRouter = require("./routes/admin");
 const cors = require("cors");
 
 const app = express();
@@ -13,16 +14,7 @@ app.use(cors());
 app.use(logger(formatsLogger));
 app.use(express.json());
 
-app.get("/super_admin", (req, res) => {
-  const data = req.body;
-  console.log("Example", data);
-  const result = adminCheck(data);
-  if (result) {
-    res.send("<h1> You ADMIN</h1>");
-  }
-  res.send("<h1> You not ADMIN</h1>");
-});
-
+app.use("/super_admin", adminRouter);
 app.use("/products", productsRouter);
 
 app.use((req, res) => {
