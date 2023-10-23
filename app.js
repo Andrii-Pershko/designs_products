@@ -2,12 +2,14 @@ const express = require("express");
 const adminCheck = require("./middlewares/admin_check");
 const logger = require("morgan");
 const productsRouter = require("./routes/products");
-const app = express();
+const cors = require("cors");
 
+const app = express();
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
-const router = express.Router();
+
 require("dotenv").config();
 
+app.use(cors());
 app.use(logger(formatsLogger));
 app.use(express.json());
 
