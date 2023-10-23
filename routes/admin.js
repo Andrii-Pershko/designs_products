@@ -5,6 +5,6 @@ const isAdmin = require("../API/admin");
 
 const router = express.Router();
 
-router.get("/", isAdmin);
+router.post("/", isAdmin);
 
 module.exports = router;

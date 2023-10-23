@@ -1,6 +1,6 @@
 const adminCheck = require("../helpers/admin_check");
 
-const isAdmin = (req, res) => {
+const isAdmin = async (req, res) => {
   const data = req.body;
   const result = adminCheck(data);
 
