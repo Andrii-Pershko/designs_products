@@ -1,8 +1,8 @@
 const express = require("express");
-const { getAllProducts } = require("../API/products");
+const { newOrder } = require("../API/order");
 
 const router = express.Router();
 
-router.get("/", getAllProducts);
+router.post("/", newOrder);
 
 module.exports = router;

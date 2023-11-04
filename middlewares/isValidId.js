@@ -4,9 +4,9 @@ const { HttpError } = require("../helpers");
 const isValidId = (req, res, next) => {
   const { contactId } = req.params;
   if (!isValidObjectId(contactId)) {
-    next(HttpError(400, `${contactId} is not valid id`));
+    return next(HttpError(400, `${contactId} is not a valid ObjectId`)); // Відправляємо помилку та припиняємо виконання
   }
-  next();
+  next(); // Викликаємо next лише якщо id коректний
 };
 
 module.exports = isValidId;

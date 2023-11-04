@@ -1,5 +1,17 @@
 const { cntrlWrappers, HttpError } = require("../helpers");
 const { Products } = require("../models/products");
+const fs = require("fs");
+const util = require("util");
+const unlinkAsync = util.promisify(fs.unlink);
+const cloudinary = require("cloudinary").v2;
+const { api_key, api_secret, cloud_name } = process.env;
+
+cloudinary.config({
+  cloud_name,
+  api_key,
+  api_secret,
+  secure: true,
+});
 
 const Joi = require("joi");
 
@@ -7,7 +19,7 @@ const addProductsSchema = Joi.object({
   title: Joi.string().required(),
   price: Joi.string().required(),
   characreristick: Joi.string().required(),
-  img: Joi.string().required(),
+  img: Joi.string(),
 });
 
 const updateProductsSchema = Joi.object({
@@ -34,8 +46,13 @@ const addProducts = async (req, res) => {
     return;
   }
 
+  const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+  await unlinkAsync(req.file.path);
+  const imageUrl = uploadedImage.secure_url;
+
   const newProduct = await Products.create({
     ...req.body,
+    img: imageUrl,
   });
   res.status(201).json(newProduct);
 };
@@ -43,13 +60,26 @@ const addProducts = async (req, res) => {
 const updateProduct = async (req, res) => {
   const { error } = updateProductsSchema.validate(req.body);
   if (error) {
-    res.status(400).json({ message: "missing fields" });
+    const emptyRequired = error.details[0].path;
+    res.status(400).json({ message: `missing fields ${emptyRequired}` });
     return;
   }
 
-  const id = req.params.contactId;
+  let imageUrl = null;
 
-  await Products.findOneAndUpdate({ _id: id }, req.body, { new: true })
+  if (req.file !== undefined) {
+    const uploadedImage = await cloudinary.uploader.upload(req.file.path);
+    await unlinkAsync(req.file.path);
+    imageUrl = uploadedImage.secure_url;
+  }
+
+  const id = req.params.contactId;
+  const product = {
+    ...req.body,
+    ...(imageUrl === null ? {} : { img: imageUrl }),
+  };
+
+  await Products.findOneAndUpdate({ _id: id }, product, { new: true })
     .then((updateProducts) => {
       if (updateProducts) {
         return res.status(200).json(updateProducts);
@@ -62,86 +92,21 @@ const updateProduct = async (req, res) => {
     });
 };
 
+const removeProduct = async (req, res, next) => {
+  const id = req.params.contactId;
 
-// const getContactById = async (req, res, next) => {
-//   const id = req.params.contactId;
-//   const owner = req.user._id;
-
-//   await Contact.findOne({ _id: id, owner }).then((user) => {
-//     if (user) {
-//       return res.json(user);
-//     } else {
-//       res.status(404).json({ message: "Contact not found" });
-//     }
-//   });
-// };
-
-// const updateContact = async (req, res, next) => {
-//   const { error } = putSchema.validate(req.body);
-//   if (error) {
-//     res.status(400).json({ message: "missing fields" });
-//     return;
-//   }
-
-//   const id = req.params.contactId;
-//   const { _id: owner } = req.user;
-
-//   await Contact.findOneAndUpdate({ _id: id, owner }, req.body, { new: true })
-//     .then((updatedContact) => {
-//       if (updatedContact) {
-//         return res.status(200).json(updatedContact);
-//       } else {
-//         res.status(404).json({ message: "Contact not found" });
-//       }
-//     })
-//     .catch((err) => {
-//       HttpError(err.status, `${err.message}`);
-//     });
-// };
-
-// const updateStatusContact = async (req, res, next) => {
-//   const { error } = updateFavoriteSchema.validate(req.body);
-
-//   if (error) {
-//     const emptyRequired = error.details[0].path;
-//     res.status(400).json({ message: `missing required ${emptyRequired}` });
-//     return;
-//   }
-
-//   const id = req.params.contactId;
-//   const { _id: owner } = req.user;
-
-//   await Contact.findOneAndUpdate({ _id: id, owner }, req.body, { new: true })
-//     .then((updatedContact) => {
-//       if (updatedContact) {
-//         return res.status(200).json(updatedContact);
-//       } else {
-//         res.status(404).json({ message: "Contact not found" });
-//       }
-//     })
-//     .catch((err) => {
-//       HttpError(err.status, `${err.message}`);
-//     });
-// };
-
-// const removeContact = async (req, res, next) => {
-//   const id = req.params.contactId;
-//   const owner = req.user._id;
-
-//   await Contact.findByIdAndRemove({ _id: id, owner }).then((user) => {
-//     if (user) {
-//       return res.status(200).json({ user, message: "Contact deleted" });
-//     } else {
-//       res.status(404).json({ message: "Contact not found" });
-//     }
-//   });
-// };
+  await Products.findByIdAndRemove({ _id: id }).then((user) => {
+    if (user) {
+      return res.status(200).json({ user, message: "Contact deleted" });
+    } else {
+      res.status(404).json({ message: "Contact not found" });
+    }
+  });
+};
 
 module.exports = {
-  // updateStatusContact: cntrlWrappers(updateStatusContact),
   updateProduct: cntrlWrappers(updateProduct),
   getAllProducts: cntrlWrappers(getAllProducts),
-  // getContactById: cntrlWrappers(getContactById),
-  // removeContact: cntrlWrappers(removeContact),
+  removeProduct: cntrlWrappers(removeProduct),
   addProducts: cntrlWrappers(addProducts),
 };
