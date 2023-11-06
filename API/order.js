@@ -4,11 +4,26 @@ const telegramBotToken = "6460421172:AAFWTaVrMTDKMABXMcXOIM5w3pe5TZ6TQho";
 const chatId = "609860130"; // Ідентифікатор вашого чату (можна отримати у @getidsbot у Телеграмі)
 
 const newOrder = async (req, res) => {
-  const { name, phone, price } = req.body;
-  const message = `Нове замовлення:\nІм'я отримувача: ${name}\nНомер телефону: ${phone}\nСума замовлення: ${price}`;
+  const {
+    userData,
+    orderData: { totalPrice, orderList },
+  } = req.body;
+
+  const message = `
+  Нове замовлення:\nІм'я отримувача: ${userData.name}\nНомер телефону: ${
+    userData.phone
+  }\nАдреса замовлення: ${
+    userData.adress
+  }\nЗагальна вартість: ${totalPrice} грн\n\n${orderList.map(
+    (order, index) =>
+      `${index + 1}) Назва продукту: ${order.title}\n Кількість: ${
+        order.amount
+      } шт\n Вартість одиниці: ${order.price} грн\n\n`
+  )}
+  `;
 
   // Надсилання повідомлення в телеграм
-  sendTelegramMessage(message)
+  sendTelegramMessage(message.replace(/,/g, ""))
     .then((response) => {
       res
         .status(200)

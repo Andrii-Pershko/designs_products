@@ -3,7 +3,9 @@ const adminCheck = require("../helpers/adminCheck");
 const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = process.env;
 
-const refreshAdmin = async (req, res) => {};
+const refreshAdmin = async (req, res) => {
+  
+};
 
 const isAdmin = async (req, res) => {
   const data = req.body;
