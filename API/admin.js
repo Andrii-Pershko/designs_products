@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = process.env;
 
 const refreshAdmin = async (req, res) => {
-  return true;
+  res.json(true);
 };
 
 const isAdmin = async (req, res) => {
