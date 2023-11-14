@@ -9,10 +9,16 @@ const {
 
 const router = express.Router();
 
-router.get("/", refreshAdmin);
 router.post("/", isAdmin);
+router.get("/", loginCheck, refreshAdmin);
 router.post("/add_product", loginCheck, upload.single("img"), addProducts);
-router.put("/:contactId", loginCheck, isValidId, upload.single("img"), updateProduct);
+router.put(
+  "/:contactId",
+  loginCheck,
+  isValidId,
+  upload.single("img"),
+  updateProduct
+);
 router.delete("/:contactId", loginCheck, isValidId, removeProduct);
 
 module.exports = router;
