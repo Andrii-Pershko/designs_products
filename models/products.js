@@ -14,6 +14,10 @@ const productsSchema = new Schema({
     required: [true, "Добавте опис товару"],
   },
   img: { type: String, required: [true, "Додайте шлях до зображення"] },
+  type: {
+    type: String,
+    required: [true, "Оберіть тип товару"],
+  },
 });
 
 const Products = model("products", productsSchema);
