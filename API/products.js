@@ -20,6 +20,7 @@ const addProductsSchema = Joi.object({
   price: Joi.string().required(),
   characreristick: Joi.string().required(),
   img: Joi.string(),
+  type: Joi.string(),
 });
 
 const updateProductsSchema = Joi.object({
@@ -27,7 +28,8 @@ const updateProductsSchema = Joi.object({
   price: Joi.string(),
   characreristick: Joi.string(),
   img: Joi.string(),
-}).or("title", "price", "characreristick", "img");
+  type: Joi.string(),
+}).or("title", "price", "characreristick", "img", "type");
 
 const getAllProducts = async (req, res) => {
   const results = await Products.find();
