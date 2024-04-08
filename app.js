@@ -1,6 +1,4 @@
 const express = require("express");
-const adminCheck = require("./helpers/adminCheck");
-const logger = require("morgan");
 const order = require("./routes/order");
 require("dotenv").config();
 const productsRouter = require("./routes/products");
@@ -11,9 +9,9 @@ const app = express();
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
 app.use(cors());
-// app.use(logger(formatsLogger));
+app.use(logger(formatsLogger));
 app.use(express.json());
-// app.use(express.static("public"));
+app.use(express.static("public"));
 
 app.use("/super_admin", adminRouter);
 app.use("/products", productsRouter);
