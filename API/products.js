@@ -1,5 +1,4 @@
 const { cntrlWrappers, HttpError } = require("../helpers");
-const { Products } = require("../models/products");
 const fs = require("fs");
 const util = require("util");
 const unlinkAsync = util.promisify(fs.unlink);
