@@ -37,7 +37,7 @@ const newOrder = async (req, res) => {
     return;
   }
 
-  Products.create({ newOrder })
+  Orders.create(newOrder)
     .then((response) => {
       const message = `
   Нове замовлення:\nІм'я отримувача: ${userData.name}\nНомер телефону: ${
