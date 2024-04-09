@@ -6,10 +6,9 @@ const chatId = "609860130"; // Ідентифікатор вашого чату 
 const Joi = require("joi");
 
 const newOrderSchema = Joi.object({
-  number: Joi.string().required(),
   name: Joi.string().required(),
   phone: Joi.string().required(),
-  adress: Joi.string(),
+  adress: Joi.string().required(),
   products: Joi.string(),
 });
 
