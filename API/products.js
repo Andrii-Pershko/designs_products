@@ -34,7 +34,7 @@ const updateProductsSchema = Joi.object({
 const getAllProducts = async (req, res) => {
   const results = await Products.find();
 
-  res.status(201).json(results);
+  res.status(200).json(results);
 };
 
 const addProducts = async (req, res) => {
